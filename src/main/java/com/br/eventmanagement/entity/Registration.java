@@ -18,11 +18,11 @@ public class Registration {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "participant_id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "event_id")
     private Event event;
 
     @Column(name = "created_at")

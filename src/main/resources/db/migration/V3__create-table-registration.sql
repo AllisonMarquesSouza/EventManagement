@@ -1,8 +1,8 @@
 create table registration(
     id uuid primary key,
-    eventId uuid not null,
-    participantId uuid not null,
+    event_id uuid not null,
+    participant_id uuid not null,
     created_at timestamp not null,
-    foreign key (eventId) references event(id) on delete cascade,
-    foreign key (participantId) references users(id) on delete cascade
+    foreign key (event_id) references event(id) on delete cascade,
+    foreign key (participant_id) references users(id) on delete cascade
 )
