@@ -18,7 +18,7 @@ public class Registration {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "participant_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne
