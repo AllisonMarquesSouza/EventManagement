@@ -1,7 +1,7 @@
 package com.br.eventmanagement.services;
 
-import com.br.eventmanagement.dtos.AuthenticationDto;
-import com.br.eventmanagement.dtos.RegisterDto;
+import com.br.eventmanagement.dtos.authentication.AuthenticationDto;
+import com.br.eventmanagement.dtos.authentication.RegisterDto;
 import com.br.eventmanagement.entity.User;
 import com.br.eventmanagement.enums.UserRole;
 import com.br.eventmanagement.repositories.UserRepository;

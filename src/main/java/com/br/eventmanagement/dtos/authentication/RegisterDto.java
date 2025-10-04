@@ -1,4 +1,4 @@
-package com.br.eventmanagement.dtos;
+package com.br.eventmanagement.dtos.authentication;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

@@ -1,8 +1,8 @@
 package com.br.eventmanagement.controllers;
 
-import com.br.eventmanagement.dtos.AuthenticationDto;
-import com.br.eventmanagement.dtos.RegisterDto;
-import com.br.eventmanagement.dtos.TokenDto;
+import com.br.eventmanagement.dtos.authentication.AuthenticationDto;
+import com.br.eventmanagement.dtos.authentication.RegisterDto;
+import com.br.eventmanagement.dtos.authentication.TokenDto;
 import com.br.eventmanagement.entity.User;
 import com.br.eventmanagement.services.AuthenticationService;
 import jakarta.validation.Valid;
