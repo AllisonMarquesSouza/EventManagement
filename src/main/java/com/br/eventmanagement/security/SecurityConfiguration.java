@@ -26,13 +26,16 @@ public class SecurityConfiguration {
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
         return httpSecurity
                 //stateful -> store session in memory, every section
-                //stateles -> Do not store session, log in by token, moro utilized nowadays (jwt would be an example of usage)
+                //stateless -> Do not store session, log in by token, more utilized nowadays (jwt would be an example of usage)
                 .csrf(CsrfConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/event/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.PATCH, "/event/**").hasRole("ADMIN")
+                                .requestMatchers(HttpMethod.DELETE, "/event/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
