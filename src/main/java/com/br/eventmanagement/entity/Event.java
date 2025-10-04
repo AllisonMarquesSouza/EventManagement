@@ -1,7 +1,9 @@
 package com.br.eventmanagement.entity;
 
+import com.br.eventmanagement.dtos.event.EventCreateDto;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -11,6 +13,7 @@ import java.util.UUID;
 @Table(name = "event")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Event {
 
     @Id
@@ -32,4 +35,10 @@ public class Event {
     @Column(name = "registered_participants")
     private Integer registeredParticipants;
 
+    public Event(EventCreateDto eventCreateDto){
+        this.title = eventCreateDto.title();
+        this.location = eventCreateDto.location();
+        this.date = eventCreateDto.date();
+        this.maxParticipants = eventCreateDto.maxParticipants();
+    }
 }
