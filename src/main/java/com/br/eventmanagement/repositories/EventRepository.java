@@ -19,6 +19,13 @@ public interface EventRepository extends JpaRepository<Event, UUID> {
     @Query("SELECT e FROM Event e WHERE e.registeredParticipants < e.maxParticipants")
     List<Event> findEventsWithAvailability();
 
+    @Query("""
+        SELECT (e.registeredParticipants < e.maxParticipants)
+        FROM Event e
+        WHERE e.id = :eventId
+    """)
+    boolean isAvailableFreeSpot(@Param("eventId") UUID eventId);
+
 
     @Query("""
     SELECT e FROM Event e
