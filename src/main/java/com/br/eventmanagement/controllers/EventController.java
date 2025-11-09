@@ -33,16 +33,21 @@ public class EventController {
         return ResponseEntity.ok(eventService.getByDate(date));
     }
 
+    @GetMapping("/isAvailableFreeSpot/{id}")
+    public ResponseEntity<Boolean> isAvailableFreeSpot(@PathVariable("id") UUID id){
+        return ResponseEntity.ok(eventService.isAvailableFreeSpot(id));
+    }
+
     @GetMapping("/available")
-    public ResponseEntity<List<Event>> getAvailable(){
-        return ResponseEntity.ok(eventService.getAvailable());
+    public ResponseEntity<List<Event>> listAllAvailable(){
+        return ResponseEntity.ok(eventService.listAllAvailable());
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<Event>> filterByTitleAndLocationAndDate(@RequestParam(required = false) String title,
-                                                                       @RequestParam(required = false) String location
+    public ResponseEntity<List<Event>> searchEvents(@RequestParam(required = false) String title,
+                                                    @RequestParam(required = false) String location
                                                                        ){
-        return ResponseEntity.ok(eventService.filterByTitleAndLocationAndDate(title, location));
+        return ResponseEntity.ok(eventService.searchEvents(title, location));
     }
 
     @PostMapping
