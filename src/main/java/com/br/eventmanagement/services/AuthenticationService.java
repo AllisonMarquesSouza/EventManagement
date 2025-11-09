@@ -4,12 +4,12 @@ import com.br.eventmanagement.dtos.authentication.AuthenticationDto;
 import com.br.eventmanagement.dtos.authentication.RegisterDto;
 import com.br.eventmanagement.entity.User;
 import com.br.eventmanagement.enums.UserRole;
+import com.br.eventmanagement.exceptions.EntityAlreadyExistsException;
 import com.br.eventmanagement.repositories.UserRepository;
 import com.br.eventmanagement.security.TokenService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -48,19 +48,16 @@ public class AuthenticationService implements UserDetailsService {
  */
     public String login(AuthenticationDto authDto){
         var usernamePassword = new UsernamePasswordAuthenticationToken(authDto.username(), authDto.password());
-        try{
-            var auth = authenticationManager.authenticate(usernamePassword);
-            return tokenService.generateToken((User) auth.getPrincipal());
 
-        } catch (AuthenticationException e){
-            throw new RuntimeException("Error while try to authenticate"); //I will personalize it later...
-        }
+        //I removed the try-catch because I'm handling exceptions already
+        var auth = authenticationManager.authenticate(usernamePassword);
+        return tokenService.generateToken((User) auth.getPrincipal());
     }
 
     @Transactional
     public User register(RegisterDto registerDto){
         if(userRepository.findByUsername(registerDto.username())!= null) {
-            throw new RuntimeException("Username already exists");
+            throw new EntityAlreadyExistsException("Username already exists");
         }
 
         String encryptedPassword = new BCryptPasswordEncoder().encode(registerDto.password());
