@@ -40,9 +40,6 @@ public class User implements UserDetails {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @OneToMany(mappedBy = "user")
-    private List<Registration> registrations;
-
     public User(String username, String password, String email ){
         this.username = username;
         this.password = password;
