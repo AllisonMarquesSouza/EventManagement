@@ -21,20 +21,24 @@ public class EventService {
         return eventRepository.findAll();
     }
 
-    public Event getById(UUID uuid){
-        return eventRepository.findById(uuid).orElseThrow(() -> new EntityNotFoundException("Event not found"));
+    public Event getById(UUID eventId){
+        return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found"));
     }
 
     public List<Event> getByDate(LocalDate date){
         return eventRepository.findByDate(date);
     }
 
-    public List<Event> getAvailable(){
+    public List<Event> listAllAvailable(){
         return eventRepository.findEventsWithAvailability();
     }
 
-    public List<Event> filterByTitleAndLocationAndDate(String title, String location){
-        return eventRepository.filterEventByTitleAndLocation(title, location);
+    public boolean isAvailableFreeSpot(UUID eventId){
+        return eventRepository.isAvailableFreeSpot(eventId);
+    }
+
+    public List<Event> searchEvents(String title, String location){
+        return eventRepository.searchEvents(title, location);
     }
 
     @Transactional
