@@ -3,38 +3,25 @@ package com.br.eventmanagement.services;
 import com.br.eventmanagement.dtos.authentication.AuthenticationDto;
 import com.br.eventmanagement.dtos.authentication.RegisterDto;
 import com.br.eventmanagement.entity.User;
-import com.br.eventmanagement.enums.UserRole;
-import com.br.eventmanagement.exceptions.EntityAlreadyExistsException;
-import com.br.eventmanagement.repositories.UserRepository;
 import com.br.eventmanagement.security.TokenService;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-public class AuthenticationService implements UserDetailsService {
+public class AuthenticationService {
 
     private final AuthenticationManager authenticationManager;
-    private final UserRepository userRepository;
     private final TokenService tokenService;
+    private final UserService userService;
 
     //using lazy here, to the AuthenticationManager do not get in loop with the same from SecurityConfiguration
-    public AuthenticationService(@Lazy AuthenticationManager authenticationManager,
-                                 UserRepository userRepository, TokenService tokenService){
+    public AuthenticationService(@Lazy AuthenticationManager authenticationManager, TokenService tokenService, UserService userService){
         this.authenticationManager = authenticationManager;
-        this.userRepository = userRepository;
         this.tokenService = tokenService;
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByUsername(username);
+        this.userService = userService;
     }
 
 /*
@@ -56,15 +43,7 @@ public class AuthenticationService implements UserDetailsService {
 
     @Transactional
     public User register(RegisterDto registerDto){
-        if(userRepository.findByUsername(registerDto.username())!= null) {
-            throw new EntityAlreadyExistsException("Username already exists");
-        }
-
-        String encryptedPassword = new BCryptPasswordEncoder().encode(registerDto.password());
-
-        User newUser = new User(registerDto.username(), encryptedPassword, registerDto.email());
-        newUser.setRole(UserRole.PARTICIPANT);
-        return userRepository.save(newUser);
+        return userService.register(registerDto);
     }
 
 }
