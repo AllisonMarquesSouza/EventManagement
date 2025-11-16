@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
+@Builder
 public record EventCreateDto( @NotBlank String title,
                              @NotBlank String location,
                              @NotNull @FutureOrPresent @JsonFormat(pattern = "yyyy-MM-dd HH:mm")LocalDateTime date,
