@@ -4,9 +4,9 @@ import com.br.eventmanagement.dtos.registration.RegistrationCreateDto;
 import com.br.eventmanagement.entity.Event;
 import com.br.eventmanagement.entity.Registration;
 import com.br.eventmanagement.entity.User;
+import com.br.eventmanagement.exceptions.BadRequestException;
 import com.br.eventmanagement.exceptions.EntityAlreadyExistsException;
 import com.br.eventmanagement.repositories.RegistrationRepository;
-import com.br.eventmanagement.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class RegistrationService {
     private final RegistrationRepository registrationRepository;
     private final EventService eventService;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     public Registration getById(UUID registrationId){
         return registrationRepository.findById(registrationId)
@@ -32,28 +32,31 @@ public class RegistrationService {
     }
 
     public List<Registration> findAllByUserId(UUID userId){
+        userService.getById(userId);//checking if user exists and everything is fine
         return registrationRepository.findAllByUserId(userId);
     }
 
     public List<Registration> findAllByEventId(UUID eventId){
+        eventService.getById(eventId);//checking if event exists and everything is fine
         return registrationRepository.findAllByEventId(eventId);
     }
 
     @Transactional
     public Registration create(RegistrationCreateDto createDto){
-        if(eventService.isAvailableFreeSpot(createDto.eventId()) &&
-                !registrationRepository.existsRegistrationByUserIdAndEventId(createDto.userId(), createDto.eventId())){
-
-            //after create, adding one more participant ... //
-            Event event = eventService.getById(createDto.eventId());
-            event.setRegisteredParticipants(event.getRegisteredParticipants() + 1);
-
-            User user = userRepository.findById(createDto.userId())
-                    .orElseThrow(() -> new EntityNotFoundException("User not found"));
-
-            return registrationRepository.save(new Registration(user, event));
+        if(registrationRepository.existsRegistrationByUserIdAndEventId(createDto.userId(), createDto.eventId())){
+            throw new EntityAlreadyExistsException("This user is already registered");
         }
-        throw new EntityAlreadyExistsException("There is no spot available in this event or You are already registered");
+
+        if(!eventService.isAvailableFreeSpot(createDto.eventId())){
+            throw new BadRequestException("There is no spot available in this event");
+        }
+
+        //after create, adding one more participant ... //
+        Event event = eventService.getById(createDto.eventId());
+        event.setRegisteredParticipants(event.getRegisteredParticipants() + 1);
+        User user = userService.getById(createDto.userId());
+        return registrationRepository.save(new Registration(user, event));
+
     }
 
     @Transactional
