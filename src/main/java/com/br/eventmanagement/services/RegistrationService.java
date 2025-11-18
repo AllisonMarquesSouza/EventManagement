@@ -61,15 +61,17 @@ public class RegistrationService {
 
     @Transactional
     public void deleteByUserIdAndEventId(UUID userId, UUID eventId){
-        registrationRepository.findByUserIdAndEventId(userId, eventId)
+        //do more verifications before, see if exists user and event
+        Registration registration = registrationRepository.findByUserIdAndEventId(userId, eventId)
                 .orElseThrow(() -> new EntityNotFoundException("There is no registration of this user to this event"));
 
-        registrationRepository.deleteByUserIdAndEventId(userId, eventId);
+        registrationRepository.delete(registration);
     }
 
     @Transactional
     public void deleteAllByUserId(UUID userId){
-        List<Registration> allByUserId = findAllByUserId(userId);
+        List<Registration> allByUserId = this.findAllByUserId(userId);
+        if(allByUserId.isEmpty()) return; //just to return if is empty, but the 'for' already does it (better to read)
 
         for(Registration currentRegister : allByUserId){
             registrationRepository.delete(currentRegister);
@@ -80,14 +82,14 @@ public class RegistrationService {
 
     @Transactional
     public void deleteAllByEventId(UUID eventId){
-        registrationRepository.deleteAllByEventId(eventId);
         Event event = eventService.getById(eventId);
+        registrationRepository.deleteAllByEventId(eventId);
         event.setRegisteredParticipants(0);
     }
 
     @Transactional
     public void deleteById(UUID registrationId){
-        Registration registration = getById(registrationId);
+        Registration registration = this.getById(registrationId);
         registration.getEvent().setRegisteredParticipants(registration.getEvent().getRegisteredParticipants() - 1);
         registrationRepository.delete(registration);
     }
