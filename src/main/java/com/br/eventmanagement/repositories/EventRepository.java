@@ -14,7 +14,7 @@ import java.util.UUID;
 public interface EventRepository extends JpaRepository<Event, UUID> {
 
     @Query("SELECT e FROM Event e WHERE DATE(e.date) = :date")
-    List<Event> findByDate(LocalDate date);
+    List<Event> findAllByDate(LocalDate date);
 
     @Query("SELECT e FROM Event e WHERE e.registeredParticipants < e.maxParticipants")
     List<Event> findEventsWithAvailability();

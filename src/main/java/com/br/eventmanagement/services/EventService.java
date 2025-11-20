@@ -25,8 +25,8 @@ public class EventService {
         return eventRepository.findById(eventId).orElseThrow(() -> new EntityNotFoundException("Event not found"));
     }
 
-    public List<Event> getByDate(LocalDate date){
-        return eventRepository.findByDate(date);
+    public List<Event> findAllByDate(LocalDate date){
+        return eventRepository.findAllByDate(date);
     }
 
     public List<Event> listAllAvailable(){
@@ -80,7 +80,8 @@ public class EventService {
 
     @Transactional
     public void delete(UUID id){
-        eventRepository.delete(this.getById(id));
+        this.getById(id);
+        eventRepository.deleteById(id);
     }
 
 }

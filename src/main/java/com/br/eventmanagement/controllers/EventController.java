@@ -29,8 +29,8 @@ public class EventController {
         return ResponseEntity.ok(eventService.getById(id));
     }
     @GetMapping("/date/{date}")
-    public ResponseEntity<List<Event>> getByDate(@PathVariable("date") LocalDate date){
-        return ResponseEntity.ok(eventService.getByDate(date));
+    public ResponseEntity<List<Event>> findAllByDate(@PathVariable("date") LocalDate date){
+        return ResponseEntity.ok(eventService.findAllByDate(date));
     }
 
     @GetMapping("/isAvailableFreeSpot/{id}")
