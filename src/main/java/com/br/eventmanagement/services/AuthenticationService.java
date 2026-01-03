@@ -1,6 +1,7 @@
 package com.br.eventmanagement.services;
 
 import com.br.eventmanagement.dtos.authentication.AuthenticationDto;
+import com.br.eventmanagement.dtos.authentication.ChangePasswordDto;
 import com.br.eventmanagement.dtos.authentication.RegisterDto;
 import com.br.eventmanagement.entity.User;
 import com.br.eventmanagement.security.TokenService;
@@ -8,7 +9,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthenticationService {
@@ -41,9 +41,12 @@ public class AuthenticationService {
         return tokenService.generateToken((User) auth.getPrincipal());
     }
 
-    @Transactional
+
     public User register(RegisterDto registerDto){
         return userService.register(registerDto);
     }
 
+    public void changePassword(ChangePasswordDto changePasswordDto){
+        userService.changePassword(changePasswordDto);
+    }
 }
