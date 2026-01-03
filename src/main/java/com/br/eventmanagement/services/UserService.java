@@ -14,7 +14,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +25,7 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -42,10 +43,10 @@ public class UserService implements UserDetailsService {
     @Transactional
     public User register(RegisterDto registerDto){
         if(userRepository.findByUsername(registerDto.username())!= null) {
-            throw new EntityAlreadyExistsException("Username already exists");
+            throw new EntityAlreadyExistsException("User with such username already exists");
         }
 
-        String encryptedPassword = new BCryptPasswordEncoder().encode(registerDto.password());
+        String encryptedPassword = passwordEncoder.encode(registerDto.password());
 
         User newUser = new User(registerDto.username(), encryptedPassword, registerDto.email());
         newUser.setRole(UserRole.PARTICIPANT);
@@ -55,10 +56,9 @@ public class UserService implements UserDetailsService {
     @Transactional
     public void changePassword(ChangePasswordDto changePasswordDto){
         User currentUser = this.getCurrentUser();
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
-        if(encoder.matches(changePasswordDto.oldPassword(), currentUser.getPassword())){
-            currentUser.setPassword(encoder.encode(changePasswordDto.newPassword()));
+        if(passwordEncoder.matches(changePasswordDto.oldPassword(), currentUser.getPassword())){
+            currentUser.setPassword(passwordEncoder.encode(changePasswordDto.newPassword()));
             userRepository.save(currentUser);
             return;
         }
