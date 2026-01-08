@@ -32,12 +32,12 @@ public class RegistrationService {
     }
 
     public List<Registration> findAllByUserId(UUID userId){
-        userService.getById(userId);//checking if user exists and everything is fine
+        userService.getById(userId);
         return registrationRepository.findAllByUserId(userId);
     }
 
     public List<Registration> findAllByEventId(UUID eventId){
-        eventService.getById(eventId);//checking if event exists and everything is fine
+        eventService.getById(eventId);
         return registrationRepository.findAllByEventId(eventId);
     }
 
@@ -51,7 +51,6 @@ public class RegistrationService {
             throw new BadRequestException("There is no spot available in this event");
         }
 
-        //after create, adding one more participant ... //
         Event event = eventService.getById(createDto.eventId());
         event.setRegisteredParticipants(event.getRegisteredParticipants() + 1);
         User user = userService.getById(createDto.userId());
@@ -61,7 +60,6 @@ public class RegistrationService {
 
     @Transactional
     public void deleteByUserIdAndEventId(UUID userId, UUID eventId){
-        //do more verifications before, see if exists user and event
         Registration registration = registrationRepository.findByUserIdAndEventId(userId, eventId)
                 .orElseThrow(() -> new EntityNotFoundException("There is no registration of this user to this event"));
 
