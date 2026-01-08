@@ -1,0 +1,43 @@
+
+networks:
+  event-management:
+    driver: bridge
+    name: event-management
+
+volumes:
+  postgresV1:
+    name: postgresV1
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres-event
+    environment:
+      POSTGRES_DB: event_management
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+
+    volumes:
+      - postgresV1:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - event-management
+
+
+  event_management:
+    build: .
+    container_name: eventManagement
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/event_management
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SECRET_JWT: my-super-secret-key
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"
+    networks:
+      - event-management
+
+
